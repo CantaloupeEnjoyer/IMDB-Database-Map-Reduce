@@ -36,27 +36,6 @@ This separation ensures that keys and values are structured correctly across Map
 
 ---
 
-## Running the Program
-
-### Local Execution
-
-A local run script is provided to execute the job without SLURM. This runs Hadoop in local mode and writes output to a local directory.
-
-```bash
-bash local_run.sh
-```
-
-### Cluster Execution
-
-SLURM batch scripts are provided for running both Part A and Part B on a Hadoop cluster.
-
-```bash
-sbatch partA.sbatch
-sbatch partB.sbatch
-```
-
----
-
 ## Performance Observations
 
 * Smaller input split sizes create more mapper tasks and increase overhead
@@ -74,15 +53,3 @@ Execution time can be measured using SLURM accounting tools (`sacct`) or Hadoop 
 * HDFS
 * SLURM
 * Bash
-
----
-
-## Author
-
-Jackson Bond
-
----
-
-## Notes
-
-This project was developed for educational purposes and demonstrates practical use of Hadoop MapReduce concepts such as joins, key/value transformations, and performance tuning.
