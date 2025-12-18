@@ -1,0 +1,79 @@
+#!/bin/bash
+
+#SBATCH -A uot256
+
+#SBATCH --job-name="IMDB PartB"
+
+#SBATCH --output="imdb.partb.out"
+
+#SBATCH --partition=compute
+
+#SBATCH --nodes=1
+
+#SBATCH --ntasks-per-node=4
+
+#SBATCH --mem=16G
+
+#SBATCH --export=ALL
+
+#SBATCH --time=29
+
+
+
+export HADOOP_CONF_DIR=/home/$USER/expansecluster
+
+module load cpu/0.15.4 gcc/7.5.0 OpenJDK
+
+
+
+SW=/expanse/lustre/projects/uot182/fegaras
+
+export HADOOP_HOME=$SW/hadoop-3.2.2
+
+export MYHADOOP_HOME=$SW/myhadoop
+
+PATH="$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$MYHADOOP_HOME/bin:$PATH"
+
+
+
+myhadoop-configure.sh -s /scratch/$USER/job_$SLURM_JOBID -i "s/$/.ib.cluster/"
+
+
+
+cp $HADOOP_CONF_DIR/slaves $HADOOP_CONF_DIR/workers
+
+
+
+start-all.sh
+
+
+
+hdfs dfs -rm -r /user/$USER/*
+
+hdfs dfs -mkdir -p /user/$USER
+
+
+
+hdfs dfs -put title.basics.tsv /user/$USER/title.basics.tsv
+
+hdfs dfs -put imdb00-title-actors.csv /user/$USER/imdb00-title-actors.csv
+
+
+
+hadoop jar MapReduceIMDB.jar MapReduceIMDB /user/$USER/title.basics.tsv /user/$USER/imdb00-title-actors.csv /user/$USER/job1out /user/$USER/output-final 2 2 partB
+
+
+
+rm -rf output-partb
+
+mkdir output-partb
+
+
+
+hdfs dfs -get /user/$USER/output-final/* output-partb
+
+
+
+stop-all.sh
+
+myhadoop-cleanup.sh
